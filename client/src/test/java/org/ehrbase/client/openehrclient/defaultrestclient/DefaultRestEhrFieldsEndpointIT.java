@@ -109,6 +109,26 @@ public class DefaultRestEhrFieldsEndpointIT {
 
         assertThat(actual.getOtherDetails()).isNotNull();
         assertThat(actual.getOtherDetails().getItems()).size().isEqualTo(ehrStatus.getOtherDetails().getItems().size());
+
+        HierObjectId subjectId2 = new HierObjectId("6ee110de-08f8-4fac-8372-820650f150a10");
+        actual.getSubject().getExternalRef().setId(subjectId2);
+
+        openEhrClient.ehrEndpoint().updateEhrStatus(ehrId, actual);
+
+        EhrStatus actual2 = openEhrClient.ehrEndpoint().getEhrStatus(ehrId).get();
+
+        assertThat(actual2.getSubject().getExternalRef().getId()).isEqualTo(subjectId2);
+        assertThat(actual2.getUid().getRoot().getValue()).isEqualTo("::local.ehrbase.org::3");
+
+        HierObjectId subjectId3 = new HierObjectId("6ee110de-08f8-4fac-8372-820650f150a11");
+        actual2.getSubject().getExternalRef().setId(subjectId3);
+
+        openEhrClient.ehrEndpoint().updateEhrStatus(ehrId, actual2);
+
+        EhrStatus actual3 = openEhrClient.ehrEndpoint().getEhrStatus(ehrId).get();
+
+        assertThat(actual3.getSubject().getExternalRef().getId()).isEqualTo(subjectId3);
+        assertThat(actual3.getUid().getRoot().getValue()).isEqualTo("::local.ehrbase.org::4");
     }
 
 }
